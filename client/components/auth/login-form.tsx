@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -27,7 +28,8 @@ type LoginFormValues = z.infer<typeof loginSchema>
 
 export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false)
-  const { login } = useAuth()
+  const router = useRouter()
+  const { login, isAuthenticated, isLoading: isAuthLoading } = useAuth()
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -36,6 +38,12 @@ export function LoginForm() {
       password: '',
     },
   })
+
+  useEffect(() => {
+    if (!isAuthLoading && isAuthenticated) {
+      router.replace('/')
+    }
+  }, [isAuthenticated, isAuthLoading, router])
 
   async function onSubmit(data: LoginFormValues) {
     setIsLoading(true)

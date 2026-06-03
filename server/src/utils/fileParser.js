@@ -4,7 +4,17 @@ import { Readable } from "stream";
 
 const REQUIRED_COLUMNS = ["FirstName", "Phone", "Notes"];
 
-const normalizeHeaders = (headers = []) => headers.map((header) => String(header).trim());
+const normalizeHeader = (header = "") =>
+  String(header)
+    .replace(/^\uFEFF/, "")
+    .trim();
+
+const normalizeHeaders = (headers = []) => headers.map((header) => normalizeHeader(header));
+
+const normalizeRowKeys = (row = {}) =>
+  Object.fromEntries(
+    Object.entries(row).map(([key, value]) => [normalizeHeader(key), value])
+  );
 
 const getMissingColumns = (headers) =>
   REQUIRED_COLUMNS.filter((column) => !headers.includes(column));
@@ -19,7 +29,7 @@ const parseCsvBuffer = (buffer) =>
       .on("headers", (parsedHeaders) => {
         headers = normalizeHeaders(parsedHeaders);
       })
-      .on("data", (row) => rows.push(row))
+      .on("data", (row) => rows.push(normalizeRowKeys(row)))
       .on("end", () => resolve({ headers, rows }))
       .on("error", reject);
   });

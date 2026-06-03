@@ -10,6 +10,14 @@ const setTokenCookie = (res, token) => {
   });
 };
 
+const clearTokenCookie = (res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
+};
+
 export const userRegister = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -112,6 +120,22 @@ export const getCurrentUser = async (req, res) => {
     return res.status(500).json({
         success: false,
         message: "Internal server error",
+    });
+  }
+};
+
+export const userLogout = async (req, res) => {
+  try {
+    clearTokenCookie(res);
+
+    return res.status(200).json({
+      success: true,
+      message: "Logout successful",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
     });
   }
 };

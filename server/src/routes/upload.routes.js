@@ -1,6 +1,10 @@
 import express from "express";
 import multer from "multer";
-import { getTasks, uploadTasks } from "../controllers/upload.controller.js";
+import {
+  distributeTasks,
+  getTasks,
+  previewUpload,
+} from "../controllers/upload.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
@@ -39,7 +43,8 @@ const handleUpload = (req, res, next) => {
 
 router.use(protect);
 
-router.post("/upload", handleUpload, uploadTasks);
+router.post("/upload/preview", handleUpload, previewUpload);
+router.post("/upload/distribute", distributeTasks);
 router.get("/tasks", getTasks);
 
 export default router;

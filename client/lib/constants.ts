@@ -3,7 +3,7 @@ export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost
 export const API_ENDPOINTS = {
   // Auth
   LOGIN: '/auth/login',
-  LOGOUT: '/auth/logout',
+  LOGOUT: '/logout',
   ME: '/auth/me',
 
   // Agents
@@ -14,7 +14,8 @@ export const API_ENDPOINTS = {
   TASKS: '/tasks',
 
   // Upload
-  UPLOAD: '/upload',
+  UPLOAD_PREVIEW: '/upload/preview',
+  UPLOAD_DISTRIBUTE: '/upload/distribute',
 }
 
 export const ROUTES = {

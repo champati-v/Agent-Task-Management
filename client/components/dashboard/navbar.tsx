@@ -25,16 +25,14 @@ export function Navbar() {
     }
   }
 
-  const userInitials = user?.firstName
-    ? (user.firstName.charAt(0) + (user.lastName?.charAt(0) || '')).toUpperCase()
-    : (user?.email?.charAt(0) || '?').toUpperCase()
+  const userInitials = (user?.name?.charAt(0) || user?.email?.charAt(0) || '?').toUpperCase()
 
   return (
     <div className="border-b bg-white dark:bg-slate-900">
       <div className="flex h-16 items-center justify-between px-4 sm:px-6">
         <h1 className="text-lg font-semibold md:hidden">Dashboard</h1>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between gap-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-full">
@@ -47,7 +45,7 @@ export function Navbar() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <div className="px-2 py-1.5">
-                <p className="text-sm font-medium">{user?.firstName || user?.email}</p>
+                <p className="text-sm font-medium">{user?.name || user?.email}</p>
                 <p className="text-xs text-slate-500">{user?.email}</p>
               </div>
               <DropdownMenuSeparator />

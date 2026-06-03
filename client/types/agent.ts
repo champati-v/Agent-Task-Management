@@ -23,6 +23,7 @@ export interface AgentResponse {
 export interface AgentsListResponse {
   success: boolean
   message: string
+  agents?: Agent[]
   data?: Agent[]
   totalAgents?: number
 }

@@ -1,8 +1,11 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { FileUpload } from '@/components/upload/file-upload'
 
 export default function UploadPage() {
+  const router = useRouter()
+
   return (
     <div className="space-y-6 p-4 sm:p-6">
       <div>
@@ -13,7 +16,7 @@ export default function UploadPage() {
       </div>
 
       <div className="max-w-2xl">
-        <FileUpload />
+        <FileUpload onSuccess={() => router.push('/tasks')} />
       </div>
     </div>
   )

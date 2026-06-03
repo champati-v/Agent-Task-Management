@@ -1,37 +1,34 @@
 'use client'
 
-import { createContext, useCallback, useEffect, useState } from 'react'
-import { User } from '@/types/auth'
+import { createContext, useCallback, useEffect, useRef, useState } from 'react'
+import { AuthContextValue, User } from '@/types/auth'
 import { authService } from '@/lib/services/auth-service'
 import { useRouter } from 'next/navigation'
 
-export const AuthContext = createContext<{
-  user: User | null
-  isLoading: boolean
-  isAuthenticated: boolean
-  login: (email: string, password: string) => Promise<void>
-  logout: () => Promise<void>
-}>({
-  user: null,
-  isLoading: true,
-  isAuthenticated: false,
-  login: async () => {},
-  logout: async () => {},
-})
+export const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
+  const hasInitialized = useRef(false)
 
-  // Check if user is already logged in
+  const fetchCurrentUser = useCallback(async () => {
+    const currentUser = await authService.getCurrentUser()
+    setUser(currentUser)
+    return currentUser
+  }, [])
+
   useEffect(() => {
+    if (hasInitialized.current) {
+      return
+    }
+
+    hasInitialized.current = true
+
     const initAuth = async () => {
       try {
-        const currentUser = await authService.getCurrentUser()
-        if (currentUser) {
-          setUser(currentUser)
-        }
+        await fetchCurrentUser()
       } catch (error) {
         console.error('Failed to get current user:', error)
       } finally {
@@ -39,28 +36,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    initAuth()
-  }, [])
+    void initAuth()
+  }, [fetchCurrentUser])
 
   const login = useCallback(async (email: string, password: string) => {
+    setIsLoading(true)
+
     try {
       const response = await authService.login(email, password)
-      if (response.success && response.user) {
-        setUser(response.user)
-        router.push('/')
-      } else {
+
+      if (!response.success) {
         throw new Error(response.message || 'Login failed')
       }
-    } catch (error) {
-      throw error
+
+      const currentUser = await fetchCurrentUser()
+      if (!currentUser) {
+        throw new Error('Unable to load authenticated user')
+      }
+
+      router.replace('/')
+    } finally {
+      setIsLoading(false)
     }
-  }, [router])
+  }, [fetchCurrentUser, router])
 
   const logout = useCallback(async () => {
     try {
       await authService.logout()
       setUser(null)
-      router.push('/login')
+      router.replace('/login')
     } catch (error) {
       console.error('Logout error:', error)
     }

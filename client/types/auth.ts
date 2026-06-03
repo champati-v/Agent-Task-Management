@@ -1,8 +1,7 @@
 export interface User {
-  id: string
+  _id: string
+  name: string
   email: string
-  firstName?: string
-  lastName?: string
   role?: string
 }
 
@@ -13,11 +12,11 @@ export interface LoginRequest {
 
 export interface LoginResponse {
   success: boolean
-  message: string
-  user?: User
+  message?: string
+  token?: string
 }
 
-export interface AuthContext {
+export interface AuthContextValue {
   user: User | null
   isLoading: boolean
   isAuthenticated: boolean

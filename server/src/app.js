@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import authRoutes from '../src/routes/auth.routes.js';
 import agentRoutes from '../src/routes/agent.routes.js';
 import uploadRoutes from '../src/routes/upload.routes.js';
+import { userLogout } from '../src/controllers/auth.controller.js';
 
 
 const app = express();
@@ -19,6 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 
 //auth routes
 app.use("/api/auth", authRoutes);
+app.post("/api/logout", userLogout);
 app.use("/api/agents", agentRoutes);
 app.use("/api", uploadRoutes);
 

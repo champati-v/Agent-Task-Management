@@ -1,6 +1,6 @@
 import axiosInstance from '../axios-instance'
 import { API_ENDPOINTS } from '../constants'
-import { LoginRequest, LoginResponse, User } from '@/types/auth'
+import { LoginResponse, User } from '@/types/auth'
 
 export const authService = {
   async login(email: string, password: string): Promise<LoginResponse> {
@@ -17,14 +17,14 @@ export const authService = {
 
   async getCurrentUser(): Promise<User | null> {
     try {
-      const response = await axiosInstance.get<{ success: boolean; data: User }>(
+      const response = await axiosInstance.get<{ success: boolean; user: User }>(
         API_ENDPOINTS.ME
       )
       if (response.data.success) {
-        return response.data.data
+        return response.data.user
       }
       return null
-    } catch (error) {
+    } catch {
       return null
     }
   },
